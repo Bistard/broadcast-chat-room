@@ -47,8 +47,6 @@ int server() {
         for (int i = 0; i < success_event_count; i++) {
             
             int sock_fd = events[i].data.fd;
-            int client_sock;
-            
             if (sock_fd == server_sock) { // request for new connection
                 
                 // accept the client request
@@ -95,8 +93,7 @@ int server() {
                     
                 } else { // successfully read the data, and broadcast to others
                     char *msg = buffer;
-                    broadcast_client(&clients_info, msg, client->get_fd());
-                    
+                    broadcast_client(&clients_info, msg, client->get_fd());                    
                     cout <<"[" << client->get_name() << "]: " << msg << endl;
 
                 }

@@ -11,22 +11,22 @@ EXEC = main
 all: main clean
 
 main: main.o server.o client.o broadcast.o log.o
-	$(CC) main.o client.o server.o broadcast.o log.o -o main 
+	$(CC) $(CXXFLAGS) main.o client.o server.o broadcast.o log.o -lpthread -o main 
 
 main.o: main.cpp server.h client.h
-	$(CC) -c main.cpp
+	$(CC) $(CXXFLAGS) -c main.cpp
 
 server.o: server.cpp server.h broadcast.h
-	$(CC) -c server.cpp
+	$(CC) $(CXXFLAGS) -c server.cpp
 
 client.o: client.cpp client.h broadcast.h
-	$(CC) -c client.cpp
+	$(CC) $(CXXFLAGS) -c client.cpp
 
 broadcast.o: broadcast.cpp broadcast.h
-	$(CC) -c broadcast.cpp
+	$(CC) $(CXXFLAGS) -c broadcast.cpp
 
 log.o: log.cpp log.h
-	$(CC) -c log.cpp
+	$(CC) $(CXXFLAGS) -c log.cpp
 
 clean:
 	rm *.o

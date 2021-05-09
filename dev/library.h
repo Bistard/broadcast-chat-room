@@ -18,4 +18,6 @@
 #include <sys/epoll.h>
 #include <assert.h>
 
+#include <thread>
+
 #endif // LIBRARY_H_

@@ -5,7 +5,7 @@
 #include "log.h"
 
 #define SERVER_IP             "127.0.0.1"
-#define MAX_EPOLL_EVENTS      10
+#define MAX_EPOLL_EVENTS      30
 #define MAX_BUFFER            500
 #define INFINITE_WAIT_TIME    -1
 

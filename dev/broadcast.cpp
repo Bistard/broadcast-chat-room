@@ -8,7 +8,7 @@ struct Client::clnt_data {
     string name;
 };
 
-Client::Client() {this->data = new clnt_data;};
+Client::Client() {this->data = new clnt_data;}
 
 void Client::set_fd(int fd) {
     assert(fd >= 0);
@@ -81,7 +81,6 @@ void broadcast_client(unordered_map<int, Client *> *clients_info,
     // traverse all the clients except sender
     for (pair<int, Client *> client_info : *clients_info) {
         int client_fd = client_info.first;
-        Client *client = client_info.second;
         if (client_fd != sender) {
             int written_size = write(client_fd, msg, MAX_BUFFER);
             if (written_size == -1) log_error("server writing to client error");
