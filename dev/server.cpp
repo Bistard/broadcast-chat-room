@@ -69,8 +69,8 @@ int server() {
                 clients_info[client_sock] = client;
                 
                 // output the client info
-                cout << "welcome new guest [" << *(client->get_name()) 
-                     << "]!" << endl;
+                cout << "welcome new guest " BLU "[" << *(client->get_name()) 
+                     << "]" RESET << endl;
                 cout << "<IP [" << inet_ntoa(clnt_addr.sin_addr)
                      << "] port [" << *(client->get_port())
                      << "] clientfd = " << client->get_fd() << ">" << endl;
@@ -87,8 +87,8 @@ int server() {
                     epoll_del(epoll_fd, sock_fd, true);
                     close(sock_fd);
 
-                    cout << "[" << *(client->get_name())
-                         << "] from port [" << *(client->get_port())
+                    cout << BLU "[" << *(client->get_name())
+                         << "]" RESET " from port [" << *(client->get_port())
                          << "] diconnected." << endl;
                     
                     clients_info[sock_fd]->client_destroy();
@@ -98,7 +98,8 @@ int server() {
                     char *msg = buffer;
                     broadcast_client(&clients_info, msg, 
                                      client->get_fd(), client->get_name());                    
-                    cout <<"[" << *(client->get_name()) << "]: " << msg << endl;
+                    cout << BLU "[" << *(client->get_name()) 
+                         << "]" RESET ": " << msg << endl;
 
                 }
             }

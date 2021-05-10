@@ -4,7 +4,7 @@
 
 using namespace std;
 
-static void read_input(Chatroom *chat, int *user_quit);
+static void read_input(Chatroom *chat);
 
 int client() {
     
@@ -31,10 +31,10 @@ int client() {
     string name;
     cout << "Enter your name: ";
     getline(cin, name);
+    chat.user_name = name;
     int name_size = write(client_sock, (const char *) name.data(), 
                           name.size() + 1);
     if (name_size == -1) log_error("client writing error");
-    chat.set_name(name);
 
     // create an epoll instance
     int epoll_fd;
@@ -45,13 +45,12 @@ int client() {
     epoll_add(epoll_fd, client_sock, true);
 
     // open a new thread for user input
-    int user_quit = 0;
-    thread user(read_input, &chat, &user_quit);
+    thread user(read_input, &chat);
 
     // main loop
     while (true) {
         // user quit
-        if (user_quit == -1) break;
+        if (chat.is_over()) break;
 
         int success_event_count = epoll_wait(epoll_fd, events, 
                                              MAX_EPOLL_EVENTS, 
@@ -74,10 +73,9 @@ int client() {
 
                 // display the msg on the chat
                 string name(name_buffer);
-                chat.display_message(name);
+                chat.display_message(&name);
             }
         }
-
     }
     
     close(client_sock);
@@ -88,8 +86,8 @@ int client() {
 
 }
 
-static void read_input(Chatroom *chat, int *user_quit) {
-    assert(user_quit);
+static void read_input(Chatroom *chat) {
+    assert(chat);
 
     set_cursor(0, 0);
     cout << WELCOME_MSG << endl;
@@ -101,13 +99,13 @@ static void read_input(Chatroom *chat, int *user_quit) {
         cout << ENTER_MSG << endl;
         // read user's message and then display it
         chat->read_message();
-        chat->display_message(*(chat->get_name()));
+        chat->display_message(&(chat->user_name));
 
         // disconnection
         if (!strcmp(chat->buffer, CLOSE)) {
             set_cursor(ENTER_BOX_COOR, 0);
-            cout << "[" << *(chat->get_name()) << "] disconnected" << endl;
-            *user_quit = -1;
+            cout << "[" << chat->user_name << "] disconnected" << endl;
+            chat->set_over();
             return;
         }
 

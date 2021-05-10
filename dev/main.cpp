@@ -7,8 +7,6 @@
 #define SERVER "server"
 #define CLIENT "client"
 
-using namespace std;
-
 int main(int argc, char *argv[]) {
     if (argc == 1) { // running server as default
         log_info("[running SERVER...]", true);
@@ -20,6 +18,6 @@ int main(int argc, char *argv[]) {
         log_info("[running CLIENT...]", true);
         client();
     } else {
-        log_error("[error]: wrong arguments");
+        log_error("wrong arguments");
     }
 }

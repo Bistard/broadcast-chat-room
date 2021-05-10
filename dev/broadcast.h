@@ -2,7 +2,6 @@
 #define BROADCAST_H_
 
 #include "library.h"
-#include "log.h"
 
 #define SERVER_IP             "127.0.0.1"
 #define MAX_EPOLL_EVENTS      30
@@ -39,7 +38,7 @@ client_initialize(int fd, uint16_t port, std::string name);
 
 void 
 broadcast_client(std::unordered_map<int, Client *> *clients_info,
-                      char *msg, int sender, std::string *sender_name);
+                 char *msg, int sender, std::string *sender_name);
 
 void 
 destroy_all_clients(std::unordered_map<int, Client *> *clients_info);

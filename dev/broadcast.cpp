@@ -1,4 +1,5 @@
 #include "broadcast.h"
+#include "log.h"
 
 using namespace std;
 
