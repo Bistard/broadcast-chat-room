@@ -22,9 +22,9 @@ void Client::set_name(string name) {this->data->name = name;}
 
 int Client::get_fd() {return this->data->fd;}
 
-string Client::get_port() {return this->data->port;}
+string *Client::get_port() {return &(this->data->port);}
 
-string Client::get_name() {return this->data->name;}
+string *Client::get_name() {return &(this->data->name);}
 
 void Client::client_destroy() {delete this->data;}
 
@@ -57,7 +57,7 @@ int accept_request(struct sockaddr_in *clnt_addr, int server_sock) {
     if (client_sock == -1) {
         log_error("accept client request error");
     } else {
-        log_info("[client connection successed]", true);
+        log_info("client connection successed", true);
     }
     return client_sock;
 }
@@ -73,7 +73,7 @@ Client *client_initialize(int fd, uint16_t port, string name) {
 }
 
 void broadcast_client(unordered_map<int, Client *> *clients_info, 
-                      char *msg, int sender) {
+                      char *msg, int sender, std::string *sender_name) {
     assert(clients_info);
     assert(msg);
     assert(sender >= 0);
@@ -82,8 +82,15 @@ void broadcast_client(unordered_map<int, Client *> *clients_info,
     for (pair<int, Client *> client_info : *clients_info) {
         int client_fd = client_info.first;
         if (client_fd != sender) {
+            // broadcast message
             int written_size = write(client_fd, msg, MAX_BUFFER);
-            if (written_size == -1) log_error("server writing to client error");
+            if (written_size == -1) 
+                log_error("server cannot write message to client");
+            // broadcast name of the client
+            written_size = write(client_fd, sender_name->data(), 
+                                 (*sender_name).size() + 1);
+            if (written_size == -1) 
+                log_error("server cannot write name to client");
         }
     }
 }

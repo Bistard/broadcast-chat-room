@@ -10,8 +10,8 @@ EXEC = main
 
 all: main clean
 
-main: main.o server.o client.o broadcast.o log.o
-	$(CC) $(CXXFLAGS) main.o client.o server.o broadcast.o log.o -lpthread -o main 
+main: main.o server.o client.o broadcast.o log.o console.o
+	$(CC) $(CXXFLAGS) main.o client.o server.o broadcast.o log.o console.o -lpthread -o main 
 
 main.o: main.cpp server.h client.h
 	$(CC) $(CXXFLAGS) -c main.cpp
@@ -27,6 +27,9 @@ broadcast.o: broadcast.cpp broadcast.h
 
 log.o: log.cpp log.h
 	$(CC) $(CXXFLAGS) -c log.cpp
+
+console.o: console.cpp console.h
+	$(CC) $(CXXFLAGS) -c console.cpp
 
 clean:
 	rm *.o

@@ -20,8 +20,8 @@ class Client {
         void set_port(std::string port);
         void set_name(std::string name);
         int get_fd();
-        std::string get_port();
-        std::string get_name();
+        std::string *get_port();
+        std::string *get_name();
         void client_destroy();
 };
 
@@ -33,7 +33,7 @@ int accept_request(struct sockaddr_in *clnt_addr, int server_sock);
 Client *client_initialize(int fd, uint16_t port, std::string name);
 
 void broadcast_client(std::unordered_map<int, Client *> *clients_info,
-                      char *msg, int sender);
+                      char *msg, int sender, std::string *sender_name);
 
 void destroy_all_clients(std::unordered_map<int, Client *> *clients_info);
 

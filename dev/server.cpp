@@ -4,7 +4,10 @@
 using namespace std;
 
 int server() {
-    
+    // console settings
+    system("clear");
+    printf("\033[8;30;80t");  // rows: 30; cols: 80
+
     // set up socket for the server
     int server_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server_sock == -1) log_error("server_sock error");
@@ -66,10 +69,10 @@ int server() {
                 clients_info[client_sock] = client;
                 
                 // output the client info
-                cout << "welcome new guest [" << client->get_name() 
+                cout << "welcome new guest [" << *(client->get_name()) 
                      << "]!" << endl;
                 cout << "<IP [" << inet_ntoa(clnt_addr.sin_addr)
-                     << "] port [" << client->get_port()
+                     << "] port [" << *(client->get_port())
                      << "] clientfd = " << client->get_fd() << ">" << endl;
 
             } else { // data from existing connection, process it
@@ -78,14 +81,14 @@ int server() {
 
                 // read the msg from the client
                 int msg_size = read(sock_fd, buffer, MAX_BUFFER);
-                if (msg_size == -1) log_error("server reading error");
-
+                if (msg_size == -1) log_error("server reading message error");
+                
                 if (!msg_size) { // client disconnected
                     epoll_del(epoll_fd, sock_fd, true);
                     close(sock_fd);
 
-                    cout << "[" << client->get_name()
-                         << "] from port [" << client->get_port()
+                    cout << "[" << *(client->get_name())
+                         << "] from port [" << *(client->get_port())
                          << "] diconnected." << endl;
                     
                     clients_info[sock_fd]->client_destroy();
@@ -93,8 +96,9 @@ int server() {
                     
                 } else { // successfully read the data, and broadcast to others
                     char *msg = buffer;
-                    broadcast_client(&clients_info, msg, client->get_fd());                    
-                    cout <<"[" << client->get_name() << "]: " << msg << endl;
+                    broadcast_client(&clients_info, msg, 
+                                     client->get_fd(), client->get_name());                    
+                    cout <<"[" << *(client->get_name()) << "]: " << msg << endl;
 
                 }
             }

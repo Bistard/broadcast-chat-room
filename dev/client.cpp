@@ -1,20 +1,20 @@
 #include "client.h"
 #include "log.h"
+#include "console.h"
 
 using namespace std;
 
-static void read_input(int *user_quit, string *name, 
-                       int client_sock, char *msg);
+static void read_input(Chatroom *chat, int *user_quit);
 
 int client() {
     
-    // message buffer
-    char buffer[MAX_BUFFER];
-
     // set up socket for the client
     int client_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (client_sock == -1) log_error("client_sock erorr");
 
+    // initialize chatroom settings
+    Chatroom chat = Chatroom(client_sock, MAX_CONSOLE_ROW, MAX_CONSOLE_COL);
+    
     // connect the server (send request)
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(struct sockaddr_in));
@@ -34,6 +34,7 @@ int client() {
     int name_size = write(client_sock, (const char *) name.data(), 
                           name.size() + 1);
     if (name_size == -1) log_error("client writing error");
+    chat.set_name(name);
 
     // create an epoll instance
     int epoll_fd;
@@ -45,8 +46,7 @@ int client() {
 
     // open a new thread for user input
     int user_quit = 0;
-    log_info(WELCOME_MSG, true);
-    thread user(read_input, &user_quit, &name, client_sock, buffer);
+    thread user(read_input, &chat, &user_quit);
 
     // main loop
     while (true) {
@@ -62,10 +62,19 @@ int client() {
         for (int i = 0; i < success_event_count; i++) {
             
             int sock_fd = events[i].data.fd;
-            if (sock_fd == client_sock) { // request for new connection
-                int msg_size = read(client_sock, buffer, MAX_BUFFER);
-                if (msg_size == -1) log_error("client reading error");
-                cout << "[somebody]: " << buffer << endl;
+            // request for new connection
+            if (sock_fd == client_sock) {
+                // reading message
+                int msg_size = read(client_sock, chat.buffer, MAX_BUFFER);
+                if (msg_size == -1) log_error("client cannot read message");
+                // reading name
+                char name_buffer[50];
+                int name_size = read(client_sock, name_buffer, 50);
+                if (name_size == -1) log_error("client cannot read name");
+
+                // display the msg on the chat
+                string name(name_buffer);
+                chat.display_message(name);
             }
         }
 
@@ -79,29 +88,32 @@ int client() {
 
 }
 
-static void read_input(int *user_quit, string *name, 
-                       int client_sock, char *buffer) {
+static void read_input(Chatroom *chat, int *user_quit) {
     assert(user_quit);
-    assert(name);
-    assert(buffer);
+
+    set_cursor(0, 0);
+    cout << WELCOME_MSG << endl;
     
     while (true) {
-        
-        // read input from the user
-        cout << "[" << *name << "]: ";
-        cin.getline(buffer, MAX_BUFFER);
+
+        // console style
+        set_cursor(ENTER_BOX_COOR - 1, 0);
+        cout << ENTER_MSG << endl;
+        // read user's message and then display it
+        chat->read_message();
+        chat->display_message(*(chat->get_name()));
 
         // disconnection
-        if (!strcmp(buffer, CLOSE)) {
-            cout << "[" << *name << "] disconnected" << endl;
+        if (!strcmp(chat->buffer, CLOSE)) {
+            set_cursor(ENTER_BOX_COOR, 0);
+            cout << "[" << *(chat->get_name()) << "] disconnected" << endl;
             *user_quit = -1;
             return;
         }
 
         // send the msg to the server
-        int written_size = write(client_sock, buffer, MAX_BUFFER);
-        if (written_size == -1) log_error("client writing error");
-        
+        chat->send_message();
     }
-    return;
+    // should never be reached
+    log_error("expected exit");
 }

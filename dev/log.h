@@ -5,9 +5,13 @@
 
 #define CLOSE        "CLOSE"
 #define NO_MSG       "NO_MSG"
-#define WELCOME_MSG  "<----------------chat room---------------->"
-
-#define log_error(msg) {perror(msg); exit(EXIT_FAILURE);}
+#define WELCOME_MSG  "<-----------------------------------chatroom------------"\
+                     "----------------------->"
+#define ENTER_MSG    "<-----------------------------------enterbox------------"\
+                     "----------------------->"
+                     
+#define log_error(msg) {std::cout << "[error]: "; \
+                        perror(msg); exit(EXIT_FAILURE);}
 
 void log_info(std::string msg, bool newline);
 
