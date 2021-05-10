@@ -25,16 +25,23 @@ class Client {
         void client_destroy();
 };
 
-void epoll_add(int epfd, int fd, bool enable_et);
-void epoll_del(int epfd, int fd, bool enable_et);
+void 
+epoll_add(int epfd, int fd, bool enable_et);
 
-int accept_request(struct sockaddr_in *clnt_addr, int server_sock);
+void 
+epoll_del(int epfd, int fd, bool enable_et);
 
-Client *client_initialize(int fd, uint16_t port, std::string name);
+int 
+accept_request(struct sockaddr_in *clnt_addr, int server_sock);
 
-void broadcast_client(std::unordered_map<int, Client *> *clients_info,
+Client *
+client_initialize(int fd, uint16_t port, std::string name);
+
+void 
+broadcast_client(std::unordered_map<int, Client *> *clients_info,
                       char *msg, int sender, std::string *sender_name);
 
-void destroy_all_clients(std::unordered_map<int, Client *> *clients_info);
+void 
+destroy_all_clients(std::unordered_map<int, Client *> *clients_info);
 
 #endif // BROADCAST_H_

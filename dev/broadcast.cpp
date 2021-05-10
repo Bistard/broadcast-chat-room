@@ -10,25 +10,33 @@ struct Client::clnt_data {
 
 Client::Client() {this->data = new clnt_data;}
 
-void Client::set_fd(int fd) {
+void 
+Client::set_fd(int fd) {
     assert(fd >= 0);
 
     this->data->fd = fd;
 }
 
-void Client::set_port(string port) {this->data->port = port;}
+void 
+Client::set_port(string port) {this->data->port = port;}
 
-void Client::set_name(string name) {this->data->name = name;}
+void 
+Client::set_name(string name) {this->data->name = name;}
 
-int Client::get_fd() {return this->data->fd;}
+int 
+Client::get_fd() {return this->data->fd;}
 
-string *Client::get_port() {return &(this->data->port);}
+string *
+Client::get_port() {return &(this->data->port);}
 
-string *Client::get_name() {return &(this->data->name);}
+string *
+Client::get_name() {return &(this->data->name);}
 
-void Client::client_destroy() {delete this->data;}
+void 
+Client::client_destroy() {delete this->data;}
 
-void epoll_add(int epfd, int fd, bool enable_et) {
+void 
+epoll_add(int epfd, int fd, bool enable_et) {
     struct epoll_event event;
     event.data.fd = fd;
     event.events = EPOLLIN;
@@ -37,7 +45,8 @@ void epoll_add(int epfd, int fd, bool enable_et) {
         log_error("[error]: adding epoll error\n");
 }
 
-void epoll_del(int epfd, int fd, bool enable_et) {
+void 
+epoll_del(int epfd, int fd, bool enable_et) {
     struct epoll_event event;
     event.data.fd = fd;
     event.events = EPOLLIN;
@@ -46,7 +55,8 @@ void epoll_del(int epfd, int fd, bool enable_et) {
         log_error("[error]: deleting epoll error\n");
 }
 
-int accept_request(struct sockaddr_in *clnt_addr, int server_sock) {
+int 
+accept_request(struct sockaddr_in *clnt_addr, int server_sock) {
     assert(clnt_addr);
     assert(server_sock >= 0);
 
@@ -62,7 +72,8 @@ int accept_request(struct sockaddr_in *clnt_addr, int server_sock) {
     return client_sock;
 }
 
-Client *client_initialize(int fd, uint16_t port, string name) {
+Client *
+client_initialize(int fd, uint16_t port, string name) {
     assert(fd >= 0);
 
     Client *client = new Client;
