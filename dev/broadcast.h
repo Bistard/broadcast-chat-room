@@ -8,6 +8,11 @@
 #define MAX_BUFFER            500
 #define INFINITE_WAIT_TIME    -1
 
+class Server {
+    public:
+
+};
+
 class Client {
     private:
         struct clnt_data;

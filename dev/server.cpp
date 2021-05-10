@@ -6,11 +6,11 @@ using namespace std;
 int server() {
     // console settings
     system("clear");
-    printf("\033[8;30;80t");  // rows: 30; cols: 80
+    printf("\033[8;%d;%dt", 30, 80);  // height: 30; width: 80
 
     // set up socket for the server
     int server_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (server_sock == -1) log_error("server_sock error");
+    if (server_sock == -1) log_error("server_sock error", true);
 
     // bind the socket with the IP & port
     struct sockaddr_in server_addr;
@@ -25,7 +25,7 @@ int server() {
 
     // listen to the client
     if (listen(server_sock, 20) == -1) {
-        log_error("listen to the client error");
+        log_error("listen to the client error", true);
     } else {
         log_info("[start listening...]", true);
     }
@@ -36,17 +36,18 @@ int server() {
     unordered_map<int, Client *> clients_info;
     
     epoll_fd = epoll_create1(0);
-    if (epoll_fd < 0) log_error("epoll_fd created error");
+    if (epoll_fd < 0) log_error("epoll_fd created error", true);
     epoll_add(epoll_fd, server_sock, true);
 
     // main loop
     while (true) {
-        int success_event_count = epoll_wait(epoll_fd, events, 
-                                             MAX_EPOLL_EVENTS, 
-                                             INFINITE_WAIT_TIME);
-        if (success_event_count < 0) log_error("epoll_wait error");
+
+        // epoll events
+        int success_event_count = 
+            epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, INFINITE_WAIT_TIME);
+        if (success_event_count < 0) log_error("epoll_wait error", true);
         
-        // some sockets are ready, process each one of them
+        // receiving some clients
         for (int i = 0; i < success_event_count; i++) {
             
             int sock_fd = events[i].data.fd;
@@ -58,8 +59,8 @@ int server() {
                 epoll_add(epoll_fd, client_sock, true);
                 
                 // read the name of the client
-                int name_size = read(client_sock, buffer, MAX_BUFFER); // name
-                if (name_size == -1) log_error("server reading error");
+                int name_size = read(client_sock, buffer, MAX_BUFFER);
+                if (name_size == -1) log_error("server reading error", true);
                 string name(buffer);
                 
                 // then create an Client instance
@@ -81,9 +82,11 @@ int server() {
 
                 // read the msg from the client
                 int msg_size = read(sock_fd, buffer, MAX_BUFFER);
-                if (msg_size == -1) log_error("server reading message error");
+                if (msg_size == -1) 
+                    log_error("server reading message error", true);
                 
-                if (!msg_size) { // client disconnected
+                // client disconnected
+                if (!msg_size) { 
                     epoll_del(epoll_fd, sock_fd, true);
                     close(sock_fd);
 
@@ -95,19 +98,18 @@ int server() {
                     clients_info.erase(sock_fd);
                     
                 } else { // successfully read the data, and broadcast to others
-                    char *msg = buffer;
-                    broadcast_client(&clients_info, msg, 
+                    // TODO: pass a Server Object
+                    broadcast_client(&clients_info, buffer, 
                                      client->get_fd(), client->get_name());                    
                     cout << BLU "[" << *(client->get_name()) 
-                         << "]" RESET ": " << msg << endl;
-
+                         << "]" RESET ": " << buffer << endl;
                 }
             }
         }
     }
 
     // close the connection
-    destroy_all_clients(&clients_info); //MIGHT CAUSE MEMORY LEAK
+    destroy_all_clients(&clients_info);
     close(server_sock);
     close(epoll_fd);
     

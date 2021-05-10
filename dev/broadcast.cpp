@@ -11,49 +11,54 @@ struct Client::clnt_data {
 
 Client::Client() {this->data = new clnt_data;}
 
-void 
+inline void 
 Client::set_fd(int fd) {
     assert(fd >= 0);
-
     this->data->fd = fd;
 }
 
-void 
+inline void 
 Client::set_port(string port) {this->data->port = port;}
 
-void 
+inline void 
 Client::set_name(string name) {this->data->name = name;}
 
-int 
+inline int 
 Client::get_fd() {return this->data->fd;}
 
-string *
+inline string *
 Client::get_port() {return &(this->data->port);}
 
-string *
+inline string *
 Client::get_name() {return &(this->data->name);}
 
-void 
+inline void 
 Client::client_destroy() {delete this->data;}
 
 void 
 epoll_add(int epfd, int fd, bool enable_et) {
+    assert(epfd >= 0);
+    assert(fd >= 0);
+
     struct epoll_event event;
     event.data.fd = fd;
     event.events = EPOLLIN;
     if (enable_et) event.events |= EPOLLET;
     if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event) == -1)
-        log_error("[error]: adding epoll error\n");
+        log_error("[error]: adding epoll error\n", true);
 }
 
 void 
 epoll_del(int epfd, int fd, bool enable_et) {
+    assert(epfd >= 0);
+    assert(fd >= 0);
+
     struct epoll_event event;
     event.data.fd = fd;
     event.events = EPOLLIN;
     if (enable_et) event.events |= EPOLLET;
     if (epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &event) == -1)
-        log_error("[error]: deleting epoll error\n");
+        log_error("[error]: deleting epoll error\n", true);
 }
 
 int 
@@ -66,7 +71,7 @@ accept_request(struct sockaddr_in *clnt_addr, int server_sock) {
                              (struct sockaddr *) clnt_addr,
                              &clnt_addr_size);
     if (client_sock == -1) {
-        log_error("accept client request error");
+        log_error("accept client request error", true);
     } else {
         log_info("client connection successed", true);
     }
@@ -89,6 +94,7 @@ void broadcast_client(unordered_map<int, Client *> *clients_info,
     assert(clients_info);
     assert(msg);
     assert(sender >= 0);
+    assert(sender_name);
 
     // traverse all the clients except sender
     for (pair<int, Client *> client_info : *clients_info) {
@@ -97,12 +103,12 @@ void broadcast_client(unordered_map<int, Client *> *clients_info,
             // broadcast message
             int written_size = write(client_fd, msg, MAX_BUFFER);
             if (written_size == -1) 
-                log_error("server cannot write message to client");
+                log_error("server cannot write message to client", true);
             // broadcast name of the client
             written_size = write(client_fd, sender_name->data(), 
                                  (*sender_name).size() + 1);
             if (written_size == -1) 
-                log_error("server cannot write name to client");
+                log_error("server cannot write name to client", true);
         }
     }
 }

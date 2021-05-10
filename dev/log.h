@@ -4,7 +4,6 @@
 #include "library.h"
 
 #define CLOSE        "CLOSE"
-#define NO_MSG       "NO_MSG"
 #define WELCOME_MSG  "<-----------------------------------chatroom------------"\
                      "----------------------->"
 #define ENTER_MSG    "<-----------------------------------enterbox------------"\
@@ -19,9 +18,8 @@
 #define WHT  "\x1B[37m"
 #define RESET "\033[0m"
 
-#define log_error(msg) {printf(RED "[error]" RESET ": "); \
-                        perror(msg); exit(EXIT_FAILURE);}
+inline void log_info(std::string msg, bool newline);
 
-void log_info(std::string msg, bool newline);
+inline void log_error(std::string msg, bool newline);
 
 #endif // LOG_H_
