@@ -64,7 +64,7 @@ int client() {
             if (sock_fd == client_sock) {
                 
                 // reading message
-                int msg_size = read(client_sock, chat.buffer, MAX_BUFFER);
+                int msg_size = read(client_sock, chat.buffer, BUFFER_SIZE);
                 if (msg_size == -1) 
                     log_error("client cannot read message", true);
                 

@@ -41,7 +41,7 @@ Chatroom::refresh_enterbox() {
 inline void 
 Chatroom::read_message() {
     set_cursor(ENTER_BOX_COOR, 0);
-    cin.getline(this->buffer, MAX_BUFFER);
+    cin.getline(this->buffer, BUFFER_SIZE);
     this->refresh_enterbox();
 }
 
@@ -58,7 +58,7 @@ Chatroom::display_message(string *name) {
 
 inline void 
 Chatroom::send_message() {
-    int written_size = write(this->get_socket(), this->buffer, MAX_BUFFER);
+    int written_size = write(this->get_socket(), this->buffer, BUFFER_SIZE);
     if (written_size == -1) log_error("client writing error", true);
 }
 

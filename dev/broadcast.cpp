@@ -101,7 +101,7 @@ void broadcast_client(unordered_map<int, Client *> *clients_info,
         int client_fd = client_info.first;
         if (client_fd != sender) {
             // broadcast message
-            int written_size = write(client_fd, msg, MAX_BUFFER);
+            int written_size = write(client_fd, msg, BUFFER_SIZE);
             if (written_size == -1) 
                 log_error("server cannot write message to client", true);
             // broadcast name of the client

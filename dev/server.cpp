@@ -32,7 +32,7 @@ int server() {
     // create an epoll instance
     int epoll_fd;
     struct epoll_event events[MAX_EPOLL_EVENTS];
-    char buffer[MAX_BUFFER];
+    char buffer[BUFFER_SIZE];
     unordered_map<int, Client *> clients_info;
     
     epoll_fd = epoll_create1(0);
@@ -59,7 +59,7 @@ int server() {
                 epoll_add(epoll_fd, client_sock, true);
                 
                 // read the name of the client
-                int name_size = read(client_sock, buffer, MAX_BUFFER);
+                int name_size = read(client_sock, buffer, BUFFER_SIZE);
                 if (name_size == -1) log_error("server reading error", true);
                 string name(buffer);
                 
@@ -81,7 +81,7 @@ int server() {
                 Client *client = clients_info[sock_fd];
 
                 // read the msg from the client
-                int msg_size = read(sock_fd, buffer, MAX_BUFFER);
+                int msg_size = read(sock_fd, buffer, BUFFER_SIZE);
                 if (msg_size == -1) 
                     log_error("server reading message error", true);
                 

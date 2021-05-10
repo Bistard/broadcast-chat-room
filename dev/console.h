@@ -18,9 +18,9 @@
 class Chatroom {
     
     public:
-        char buffer[MAX_BUFFER];
+        char buffer[BUFFER_SIZE];
         std::string user_name;
-    
+
     private:
         bool chat_over;
         int client_sock;
