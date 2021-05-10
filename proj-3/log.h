@@ -7,8 +7,6 @@
 #define NO_MSG       "NO_MSG"
 #define WELCOME_MSG  "<----------------chat room---------------->"
 
-#define EXIT_USER_INPUT -1
-
 #define log_error(msg) {perror(msg); exit(EXIT_FAILURE);}
 
 void log_info(std::string msg, bool newline);
