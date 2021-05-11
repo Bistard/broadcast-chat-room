@@ -18,8 +18,8 @@
 #define WHT   "\x1B[37m"
 #define RESET "\033[0m"
 
-inline void log_info(std::string msg, bool newline);
+void log_info(std::string msg, bool newline);
 
-inline void log_error(std::string msg, bool newline);
+void log_error(std::string msg, bool newline);
 
 #endif // LOG_H_

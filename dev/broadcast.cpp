@@ -11,28 +11,28 @@ struct Client::clnt_data {
 
 Client::Client() {this->data = new clnt_data;}
 
-inline void 
+void 
 Client::set_fd(int fd) {
     assert(fd >= 0);
     this->data->fd = fd;
 }
 
-inline void 
+void 
 Client::set_port(string port) {this->data->port = port;}
 
-inline void 
+void 
 Client::set_name(string name) {this->data->name = name;}
 
-inline int 
+int 
 Client::get_fd() {return this->data->fd;}
 
-inline string *
+string *
 Client::get_port() {return &(this->data->port);}
 
-inline string *
+string *
 Client::get_name() {return &(this->data->name);}
 
-inline void 
+void 
 Client::client_destroy() {delete this->data;}
 
 void 
@@ -89,8 +89,9 @@ client_initialize(int fd, uint16_t port, string name) {
     return client;
 }
 
-void broadcast_client(unordered_map<int, Client *> *clients_info, 
-                      char *msg, int sender, std::string *sender_name) {
+void 
+broadcast_client(unordered_map<int, Client *> *clients_info, 
+                 char *msg, int sender, std::string *sender_name) {
     assert(clients_info);
     assert(msg);
     assert(sender >= 0);
@@ -113,7 +114,8 @@ void broadcast_client(unordered_map<int, Client *> *clients_info,
     }
 }
 
-void destroy_all_clients(std::unordered_map<int, Client *> *clients_info) {
+void 
+destroy_all_clients(std::unordered_map<int, Client *> *clients_info) {
     assert(clients_info);
 
     for (pair<int, Client *> client : *clients_info) {

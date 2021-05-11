@@ -14,19 +14,19 @@ Chatroom::Chatroom(int client_sock, int rows, int cols) {
     this->chat_over = false;
 }
 
-inline void 
+void 
 Chatroom::set_over() {this->chat_over = true;}
 
-inline int 
+int 
 Chatroom::get_socket() {return this->client_sock;}
 
-inline int 
+int 
 Chatroom::get_cursor() {return this->chat_cursor;}
 
-inline bool 
+bool 
 Chatroom::is_over() {return this->chat_over;}
 
-inline void 
+void 
 Chatroom::refresh_enterbox() {
     set_cursor(ENTER_BOX_COOR - 1, 0);
     cout << ENTER_MSG << endl;
@@ -38,14 +38,14 @@ Chatroom::refresh_enterbox() {
     putchar(' ');
 }
 
-inline void 
+void 
 Chatroom::read_message() {
     set_cursor(ENTER_BOX_COOR, 0);
     cin.getline(this->buffer, BUFFER_SIZE);
     this->refresh_enterbox();
 }
 
-inline void 
+void 
 Chatroom::display_message(string *name) {
     set_cursor(this->chat_cursor, 0);
     printf(GRN "[%s]:" WHT "%s\n", (*name).data(), this->buffer);
@@ -56,7 +56,7 @@ Chatroom::display_message(string *name) {
     refresh_enterbox();
 }
 
-inline void 
+void 
 Chatroom::send_message() {
     int written_size = write(this->get_socket(), this->buffer, BUFFER_SIZE);
     if (written_size == -1) log_error("client writing error", true);

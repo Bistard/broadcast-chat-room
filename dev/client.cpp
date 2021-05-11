@@ -4,7 +4,7 @@
 
 using namespace std;
 
-static void read_input(Chatroom *chat);
+static void read_input(Chatroom *);
 
 int client() {
     

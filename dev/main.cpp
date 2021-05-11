@@ -18,6 +18,6 @@ int main(int argc, char *argv[]) {
         log_info("[running CLIENT...]", true);
         client();
     } else {
-        log_error("wrong arguments");
+        log_error("wrong arguments", true);
     }
 }

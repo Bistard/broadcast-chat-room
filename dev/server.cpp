@@ -1,4 +1,5 @@
 #include "server.h"
+#include "console.h"
 #include "log.h"
 
 using namespace std;
@@ -6,7 +7,7 @@ using namespace std;
 int server() {
     // console settings
     system("clear");
-    printf("\033[8;%d;%dt", 30, 80);  // height: 30; width: 80
+    printf("\033[8;%d;%dt", MAX_CONSOLE_ROW, MAX_CONSOLE_COL);
 
     // set up socket for the server
     int server_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -70,8 +71,10 @@ int server() {
                 clients_info[client_sock] = client;
                 
                 // output the client info
+                log_info("", false);
                 cout << "welcome new guest " BLU "[" << *(client->get_name()) 
                      << "]" RESET << endl;
+                log_info("", false);
                 cout << "<IP [" << inet_ntoa(clnt_addr.sin_addr)
                      << "] port [" << *(client->get_port())
                      << "] clientfd = " << client->get_fd() << ">" << endl;
@@ -91,8 +94,7 @@ int server() {
                     close(sock_fd);
 
                     cout << BLU "[" << *(client->get_name())
-                         << "]" RESET " from port [" << *(client->get_port())
-                         << "] diconnected." << endl;
+                         << "]" RESET ": diconnected." << endl;
                     
                     clients_info[sock_fd]->client_destroy();
                     clients_info.erase(sock_fd);

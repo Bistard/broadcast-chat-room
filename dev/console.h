@@ -8,7 +8,6 @@
 #include "library.h"
 #include "broadcast.h"
 
-
 #define MAX_CONSOLE_ROW  30
 #define MAX_CONSOLE_COL  80
 
