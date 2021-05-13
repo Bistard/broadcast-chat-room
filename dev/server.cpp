@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 int server() {
     // console settings
     system("clear");
@@ -11,7 +12,8 @@ int server() {
 
     // set up socket for the server
     int server_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (server_sock == -1) log_error("server_sock error", true);
+    if (server_sock == -1) 
+        Logger::log_error("server_sock error", true);
 
     // bind the socket with the IP & port
     struct sockaddr_in server_addr;
@@ -26,10 +28,11 @@ int server() {
 
     // listen to the client
     if (listen(server_sock, 20) == -1) {
-        log_error("listen to the client error", true);
+        Logger::log_error("listen to the client error", true);
     } else {
-        log_info("[start listening...]", true);
+        Logger::log_info("[start listening...]", true);
     }
+
     // create an epoll instance
     int epoll_fd;
     struct epoll_event events[MAX_EPOLL_EVENTS];
@@ -37,7 +40,9 @@ int server() {
     unordered_map<int, Client *> clients_info;
     
     epoll_fd = epoll_create1(0);
-    if (epoll_fd < 0) log_error("epoll_fd created error", true);
+    if (epoll_fd < 0) 
+        Logger::log_error("epoll_fd created error", true);
+    
     epoll_add(epoll_fd, server_sock, true);
 
     // main loop
@@ -46,7 +51,8 @@ int server() {
         // epoll events
         int success_event_count = 
             epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, INFINITE_WAIT_TIME);
-        if (success_event_count < 0) log_error("epoll_wait error", true);
+        if (success_event_count < 0) 
+            Logger::log_error("epoll_wait error", true);
         
         // receiving some clients
         for (int i = 0; i < success_event_count; i++) {
@@ -61,7 +67,8 @@ int server() {
                 
                 // read the name of the client
                 int name_size = read(client_sock, buffer, BUFFER_SIZE);
-                if (name_size == -1) log_error("server reading error", true);
+                if (name_size == -1) 
+                    Logger::log_error("server reading error", true);
                 string name(buffer);
                 
                 // then create an Client instance
@@ -71,10 +78,10 @@ int server() {
                 clients_info[client_sock] = client;
                 
                 // output the client info
-                log_info("", false);
+                Logger::log_info("", false);
                 cout << "welcome new guest " BLU "[" << *(client->get_name()) 
                      << "]" RESET << endl;
-                log_info("", false);
+                Logger::log_info("", false);
                 cout << "<IP [" << inet_ntoa(clnt_addr.sin_addr)
                      << "] port [" << *(client->get_port())
                      << "] clientfd = " << client->get_fd() << ">" << endl;
@@ -86,15 +93,16 @@ int server() {
                 // read the msg from the client
                 int msg_size = read(sock_fd, buffer, BUFFER_SIZE);
                 if (msg_size == -1) 
-                    log_error("server reading message error", true);
+                    Logger::log_error("server reading message error", true);
                 
                 // client disconnected
                 if (!msg_size) { 
                     epoll_del(epoll_fd, sock_fd, true);
                     close(sock_fd);
 
-                    cout << BLU "[" << *(client->get_name())
-                         << "]" RESET ": diconnected." << endl;
+                    Logger::log_info(BLU "[" + *(client->get_name()) 
+                                             + "]" RESET " disconneted.",
+                                     true);
                     
                     clients_info[sock_fd]->client_destroy();
                     clients_info.erase(sock_fd);

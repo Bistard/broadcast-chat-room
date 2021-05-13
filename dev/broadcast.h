@@ -8,20 +8,24 @@
 #define BUFFER_SIZE            500
 #define INFINITE_WAIT_TIME    -1
 
-class Client {
-    private:
-        struct clnt_data;
-        struct clnt_data *data;
+class Client 
+{
+private:
+    struct clnt_data;
+    struct clnt_data *data;
+
+public:
+    Client();
     
-    public:
-        Client();
-        void set_fd(int fd);
-        void set_port(std::string port);
-        void set_name(std::string name);
-        int get_fd();
-        std::string *get_port();
-        std::string *get_name();
-        void client_destroy();
+    void set_fd(int fd);
+    void set_port(std::string port);
+    void set_name(std::string name);
+
+    int get_fd();
+    std::string *get_port();
+    std::string *get_name();
+    
+    void client_destroy();
 };
 
 void 

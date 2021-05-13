@@ -14,31 +14,33 @@
 #define ENTER_BOX_HEIGHT 3
 #define ENTER_BOX_COOR   MAX_CONSOLE_ROW - ENTER_BOX_HEIGHT + 1
 
-class Chatroom {
+class Chatroom 
+{
+
+public:
+    char buffer[BUFFER_SIZE];
+    std::string user_name;
+
+private:
+    bool chat_over;
+    int client_sock;
+    int chat_cursor;
+
+public:
+    Chatroom(int client_sock, int rows, int cols);
     
-    public:
-        char buffer[BUFFER_SIZE];
-        std::string user_name;
+    void set_over();
+    bool is_over();
 
-    private:
-        bool chat_over;
-        int client_sock;
-        int chat_cursor;
+    int get_socket();
+    int get_cursor();
 
-    public:
-        Chatroom(int client_sock, int rows, int cols);
-        
-        void set_over();
-        bool is_over();
+    void refresh_enterbox();
 
-        int get_socket();
-        int get_cursor();
+    void read_message();
+    void display_message(std::string *name);
+    void send_message();
 
-        void refresh_enterbox();
-
-        void read_message();
-        void display_message(std::string *name);
-        void send_message();
 };
 
 void set_cursor(int row, int col);

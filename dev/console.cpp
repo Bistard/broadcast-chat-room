@@ -59,7 +59,8 @@ Chatroom::display_message(string *name) {
 void 
 Chatroom::send_message() {
     int written_size = write(this->get_socket(), this->buffer, BUFFER_SIZE);
-    if (written_size == -1) log_error("client writing error", true);
+    if (written_size == -1) 
+        Logger::log_error("client writing error", true);
 }
 
 void set_cursor(int row, int col) {

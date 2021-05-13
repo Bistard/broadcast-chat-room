@@ -3,7 +3,7 @@
 
 
  */
-struct tcpheader {
+struct tcph_s {
     uint16_t tcph_src_port;       // sourse port
     uint16_t tcph_des_port;       // destination port
     uint32_t tcph_seq_num;        // sequence number
@@ -21,4 +21,7 @@ struct tcpheader {
     uint16_t tcph_chk_sum;        // check sum
     uint16_t tcph_urg_ptr;        // urgent pointer
 };
+
+typedef tcph_s tcph_t;
+
 

@@ -9,15 +9,15 @@
 
 int main(int argc, char *argv[]) {
     if (argc == 1) { // running server as default
-        log_info("[running SERVER...]", true);
+        Logger::log_info("[running SERVER...]", true);
         server();
     } else if (argc == 2 && !strcmp(argv[1], SERVER)) { // running server
-        log_info("[running SERVER...]", true);
+        Logger::log_info("[running SERVER...]", true);
         server();
     } else if (argc == 2 && !strcmp(argv[1], CLIENT)) { // running client
-        log_info("[running CLIENT...]", true);
+        Logger::log_info("[running CLIENT...]", true);
         client();
     } else {
-        log_error("wrong arguments", true);
+        Logger::log_error("wrong arguments", true);
     }
 }

@@ -18,8 +18,28 @@
 #define WHT   "\x1B[37m"
 #define RESET "\033[0m"
 
-void log_info(std::string msg, bool newline);
+namespace Logger 
+{
+    enum Level {INFO, WARN, ERROR, FATAL};
 
-void log_error(std::string msg, bool newline);
+    /* Singleton Logger Class */
+    class Log 
+    {
+    public:
+        static Log &get_instance();
+    private:
+        Log() {}
+        Log(const Log &);
+        Log &operator=(const Log &);
+    public:
+        void log(Level lv, std::string msg, bool newline);
+    };
+
+    void log_info (std::string msg, bool newline);
+    void log_warn (std::string msg, bool newline);
+    void log_error(std::string msg, bool newline);
+    void log_fatal(std::string msg, bool newline);
+
+}   
 
 #endif // LOG_H_

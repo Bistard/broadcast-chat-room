@@ -45,7 +45,7 @@ epoll_add(int epfd, int fd, bool enable_et) {
     event.events = EPOLLIN;
     if (enable_et) event.events |= EPOLLET;
     if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event) == -1)
-        log_error("[error]: adding epoll error\n", true);
+        Logger::log_error("[error]: adding epoll error\n", true);
 }
 
 void 
@@ -58,7 +58,7 @@ epoll_del(int epfd, int fd, bool enable_et) {
     event.events = EPOLLIN;
     if (enable_et) event.events |= EPOLLET;
     if (epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &event) == -1)
-        log_error("[error]: deleting epoll error\n", true);
+        Logger::log_error("[error]: deleting epoll error\n", true);
 }
 
 int 
@@ -71,9 +71,9 @@ accept_request(struct sockaddr_in *clnt_addr, int server_sock) {
                              (struct sockaddr *) clnt_addr,
                              &clnt_addr_size);
     if (client_sock == -1) {
-        log_error("accept client request error", true);
+        Logger::log_error("accept client request error", true);
     } else {
-        log_info("client connection successed", true);
+        Logger::log_info("client connection successed", true);
     }
     return client_sock;
 }
@@ -104,12 +104,12 @@ broadcast_client(unordered_map<int, Client *> *clients_info,
             // broadcast message
             int written_size = write(client_fd, msg, BUFFER_SIZE);
             if (written_size == -1) 
-                log_error("server cannot write message to client", true);
+                Logger::log_error("server cannot write message to client", true);
             // broadcast name of the client
             written_size = write(client_fd, sender_name->data(), 
                                  (*sender_name).size() + 1);
             if (written_size == -1) 
-                log_error("server cannot write name to client", true);
+                Logger::log_error("server cannot write name to client", true);
         }
     }
 }
